@@ -24,11 +24,11 @@ In package.json:
       {
         "files": "plugin-file.php"
       }
-    ],
-  ],
-},
+    ]
+  ]
+}
 ```
 
 ## Limitations
 
-It currently handles only a `Version:` string, use in WordPress plugin and theme files.
+It currently handles only a `Version:` string, used in WordPress plugin and theme files.
