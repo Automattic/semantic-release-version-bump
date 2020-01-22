@@ -16,10 +16,9 @@ It takes a single option (`files`), a glob to match the files.
 
 In package.json:
 
-```
+```json
 "release": {
   "prepare": [
-
     [
       "semantic-release-version-bump",
       {
