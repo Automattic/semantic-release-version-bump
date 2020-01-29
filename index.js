@@ -7,17 +7,25 @@ const glob = require("glob");
  * @param {string} newVersion new version number
  */
 function bumpVersionInFile(filePath, newVersion) {
-  const phpFile = fs.readFileSync(filePath, {
+  const fileContents = fs.readFileSync(filePath, {
     encoding: "utf8"
   });
-  const fileWithNewVersion = phpFile.replace(
-    /(Version:\s*).*/,
-    `\$1${newVersion}`
-  );
+  const versionRegex = /Version:\s*(.*)/;
+  const versionMatch = fileContents.match(versionRegex);
+  if (versionMatch) {
+    const foundVersionNumber = versionMatch[1];
 
-  fs.writeFileSync(filePath, fileWithNewVersion, {
-    encoding: "utf8"
-  });
+    const updatedFile = fileContents.replace(
+      RegExp(foundVersionNumber, "g"),
+      newVersion
+    );
+
+    fs.writeFileSync(filePath, updatedFile, {
+      encoding: "utf8"
+    });
+
+    return { foundVersionNumber };
+  }
 }
 
 /**
@@ -30,8 +38,13 @@ async function prepare({ files }, { cwd, nextRelease: { version }, logger }) {
       logger.log("Error");
     } else {
       foundFiles.map(file => {
-        logger.log("Write version %s to %s", version, path.relative(cwd, file));
-        return bumpVersionInFile(file, version);
+        const { foundVersionNumber } = bumpVersionInFile(file, version);
+        logger.log(
+          "Write version %s to %s (found: %s)",
+          version,
+          path.relative(cwd, file),
+          foundVersionNumber
+        );
       });
     }
   });
