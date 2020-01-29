@@ -1,6 +1,6 @@
 {
   "name": "semantic-release-version-bump",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "semantic-release version bumping in arbitrary files",
   "main": "index.js",
   "scripts": {
