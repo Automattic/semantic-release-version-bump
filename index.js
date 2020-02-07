@@ -1,6 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 const glob = require("glob");
+const util = require("util");
+const exec = util.promisify(require("child_process").exec);
 
 /**
  * @param {string} filePath path to file
@@ -32,27 +34,38 @@ function bumpVersionInFile(filePath, newVersion) {
  * @param {Object} pluginConfig pluginConfig
  * @param {Object} context context
  */
-async function prepare({ files }, { cwd, nextRelease: { version }, logger }) {
+async function prepare(
+  { files, callback },
+  { cwd, nextRelease: { version }, logger }
+) {
   // handle both array and string
   const filesArray = typeof files === "string" ? [files] : files;
 
   filesArray.forEach(filesMatchString => {
-    glob(path.join(cwd, filesMatchString), function(error, foundFiles) {
-      if (error) {
-        logger.log("Error");
-      } else {
-        foundFiles.map(file => {
-          const { foundVersionNumber } = bumpVersionInFile(file, version);
-          logger.log(
-            "Write version %s to %s (found: %s)",
-            version,
-            path.relative(cwd, file),
-            foundVersionNumber
-          );
-        });
-      }
-    });
+    if (filesMatchString.length) {
+      const foundFiles = glob.sync(path.join(cwd, filesMatchString));
+      foundFiles.map(file => {
+        const { foundVersionNumber } = bumpVersionInFile(file, version);
+        logger.log(
+          "Write version %s to %s (found: %s)",
+          version,
+          path.relative(cwd, file),
+          foundVersionNumber
+        );
+      });
+    }
   });
+
+  if (callback) {
+    logger.log(`executing callback: ${callback}`);
+    const { stdout, stderr } = await exec(callback, { cwd });
+    if (stdout) {
+      logger.log(stdout);
+    }
+    if (stderr) {
+      logger.error(stderr);
+    }
+  }
 }
 
 module.exports = { prepare };

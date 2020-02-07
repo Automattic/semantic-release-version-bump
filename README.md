@@ -12,9 +12,12 @@ A [`semantic-release`](https://semantic-release.gitbook.io) plugin to bump a ver
 
 ## Configuration
 
-It takes a single option (`files`), a glob to match the files - it can either be a string or an array of strings.
+| option | required | type | function |
+| :------------- | :------------- | :------------- |  :------------- |
+| `files` | ✓ | `string \| [string]` | glob (or array of globs) to match the files in which version should be bumped |
+| `callback` | 𐄂 | `string` | command to be called after the version is bumped in file/s |
 
-In package.json:
+## Example
 
 ```json
 "release": {
@@ -22,7 +25,8 @@ In package.json:
     [
       "semantic-release-version-bump",
       {
-        "files": "plugin-file.php"
+        "files": "my-plugin.php",
+        "callback": "zip -r my-plugin.zip"
       }
     ]
   ]
