@@ -26,7 +26,7 @@ A [`semantic-release`](https://semantic-release.gitbook.io) plugin to bump a ver
       "semantic-release-version-bump",
       {
         "files": "my-plugin.php",
-        "callback": "zip -r my-plugin.zip"
+        "callback": "zip -r my-plugin.zip ."
       }
     ]
   ]
