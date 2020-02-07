@@ -33,20 +33,25 @@ function bumpVersionInFile(filePath, newVersion) {
  * @param {Object} context context
  */
 async function prepare({ files }, { cwd, nextRelease: { version }, logger }) {
-  glob(path.join(cwd, files), function(error, foundFiles) {
-    if (error) {
-      logger.log("Error");
-    } else {
-      foundFiles.map(file => {
-        const { foundVersionNumber } = bumpVersionInFile(file, version);
-        logger.log(
-          "Write version %s to %s (found: %s)",
-          version,
-          path.relative(cwd, file),
-          foundVersionNumber
-        );
-      });
-    }
+  // handle both array and string
+  const filesArray = typeof files === "string" ? [files] : files;
+
+  filesArray.forEach(filesMatchString => {
+    glob(path.join(cwd, filesMatchString), function(error, foundFiles) {
+      if (error) {
+        logger.log("Error");
+      } else {
+        foundFiles.map(file => {
+          const { foundVersionNumber } = bumpVersionInFile(file, version);
+          logger.log(
+            "Write version %s to %s (found: %s)",
+            version,
+            path.relative(cwd, file),
+            foundVersionNumber
+          );
+        });
+      }
+    });
   });
 }
 
