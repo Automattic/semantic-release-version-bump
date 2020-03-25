@@ -14,8 +14,9 @@ function bumpVersionInFile(filePath, newVersion) {
   });
   const versionRegex = /Version:\s*(.*)/;
   const versionMatch = fileContents.match(versionRegex);
-  if (versionMatch) {
-    const foundVersionNumber = versionMatch[1];
+  if (versionMatch && versionMatch[1]) {
+    // escape dots in version string, so they are dot character literals
+    const foundVersionNumber = versionMatch[1].replace(/\./g, "\\.");
 
     const updatedFile = fileContents.replace(
       RegExp(foundVersionNumber, "g"),
